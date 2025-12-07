@@ -9,8 +9,9 @@ from gestures import GestureInterpreter #from gestures.py
 
 def main(): 
     hand_tracker = HandTracker()
-    gesture_interpreter = GestureInterpreter()
     audio_engine = AudioEngine() 
+    gesture_interpreter = GestureInterpreter()
+
 
     capture = cv2.VideCapture(0) #opens default camera 
 
