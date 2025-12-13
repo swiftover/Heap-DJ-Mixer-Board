@@ -12,3 +12,29 @@ class HandTracker:
     self.drawing_utils = mp.solutions.drawing_utils # draws the hand overlay 
 
     self._last_landmarks = None # store detected hand land mark 
+
+    def process(self,frame): 
+        #conversion from cv2 to mp         
+        rgb_frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+
+        #hand track
+        resultant = self.hands.process(rbg.frame)
+        
+
+        if resultant.multi_hands_landmarks: 
+            self._last_landmarks = resultant.multi_hand_landmarks
+            return resultant.multi_hand_landmarks
+        self._last_landmarks = None 
+        return None 
+    
+    def skeleton_marks(self,frame): 
+        if self._last_landmarks is None: 
+            return 
+        
+        for hand_landmarks in self._last_landmarks: 
+            self.drawing_utils.draw_landmarks( 
+                frame, hand_landmarks, self.mp_hands.HAND_CONNECTIONS
+            )
+            
+
+
