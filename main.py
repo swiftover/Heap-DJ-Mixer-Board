@@ -15,31 +15,31 @@ def main():
 
     capture = cv2.VideoCapture(0) #opens default camera 
 
-    if not capture.VideoCapture(0):
+    if not capture.isOpened():
         print("ERROR COULDNT OPEN DEFAULT CAMERA")
         return 
     print("Heap DJ Mixer is running, press q to quit")
 
-    while True: 
-        ret, frame = capture.read() #did the frame get captured correctly
+    while True:
+        ret, frame = capture.read()
         if not ret:
             print("ERROR: COULD NOT READ THE CAMERA FRAME")
             break
 
-        frame = cv2.flip(frame,1) #mirror the frame so its equivalent to natural view
+        frame = cv2.flip(frame, 1)
 
         hand_landmarks = hand_tracker.process(frame)
-        
+
         if hand_landmarks:
             controls = gesture_interpreter.interpret(hand_landmarks)
-            audio_engine.update_from_gestures(controls)
+            audio_engine.update(controls)
 
         hand_tracker.draw_landmarks(frame)
 
-        cv2.imshow("Heap DJ Mixer, frame")
+        cv2.imshow("Heap DJ Mixer", frame)
 
-        if cv2.waitkey(1) & 0xFF == ord('q'):
-            break 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
     capture.release()
     cv2.destroyAllWindows()

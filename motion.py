@@ -12,7 +12,7 @@ class interpreter:
         self.open_threshold = open_threshold
         self.last_gesture = "none"
     
-    def interpreted(self,hands): 
+    def interpret(self,hands): 
 
 
         hand = hands[0] 
@@ -47,7 +47,7 @@ class interpreter:
         pinch_strength = 0 #0 = no pinch, 1 = strong pinch 
         if pinch: 
             #clsoer the fingers the greater the pinch strength 
-            pinch_strenth = max(0.0, min(1.0, 1.0- (pinch_detection/self.pinch_threshold)))
+            pinch_strength = max(0.0, min(1.0, 1.0- (pinch_detection/self.pinch_threshold)))
         
         openness =( distance(index_tip, wrist) + distance(middle_tip, wrist) + distance(ring_tip, wrist) + distance(pinky_tip, wrist)) / 4.0
         open = openness > self.open_threshold
@@ -55,10 +55,12 @@ class interpreter:
 
 
         # gesture classification 
+# gesture classification
+        gesture = self.last_gesture  # default
 
-        if pinch: 
+        if pinch:
             gesture = "pinch"
-        elif fist: 
+        elif fist:
             gesture = "fist"
         elif open and index_up and middle_up and ring_up and pinky_up:
             gesture = "open"
@@ -66,8 +68,11 @@ class interpreter:
             gesture = "point"
         elif index_up and middle_up and (not ring_up) and (not pinky_up):
             gesture = "peace"
+        else:
+            gesture = "none"
 
-        self.last_gesture = gesture 
+        self.last_gesture = gesture
+
 
         return {
 

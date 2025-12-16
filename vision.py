@@ -21,13 +21,13 @@ class HandTracker:
         resultant = self.hands.process(rgb_frame)
         
 
-        if resultant.multi_hands_landmarks: 
+        if resultant.multi_hand_landmarks: 
             self._last_landmarks = resultant.multi_hand_landmarks
             return resultant.multi_hand_landmarks
         self._last_landmarks = None 
         return None 
     
-    def skeleton_marks(self,frame): 
+    def draw_landmarks(self,frame): 
         if self._last_landmarks is None: 
             return 
         
