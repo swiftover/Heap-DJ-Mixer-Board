@@ -7,18 +7,24 @@ import smoothing
 class AudioEngine: 
     def __init__(self): 
         pygame.mixer.init()
+        pygame.mixer.set_num_channels(2)
 
         self.track_a = pygame.mixer.Sound(TRACK_A_PATH)
         self.track_b = pygame.mixer.Sound(TRACK_B_PATH)
 
-        self.channel_a = self.track_a.play(loops = -1)
-        self.channel_b = self.track_b.play(loops = -1)
+        # Force specific channels (no auto allocation)
+        self.channel_a = pygame.mixer.Channel(0)
+        self.channel_b = pygame.mixer.Channel(1)
+
+        self.channel_a.play(self.track_a, loops=-1)
+        self.channel_b.play(self.track_b, loops=-1)
 
         self.crossfader = INITIAL_CROSSFADER
         self.smooth_crossfader = self.crossfader
         self.master_volume = MASTER_VOLUME
 
-        self.apply_crossfade() 
+        self.apply_crossfade()
+
 
 
     def update(self, controls: dict):
@@ -50,8 +56,12 @@ class AudioEngine:
         
         volume_a = (1-self.crossfader) * self.master_volume
         volume_b = self.crossfader * self.master_volume 
+
         volume_a = max(0.0, min(1.0,volume_a))
         volume_b = max(0.0, min(1.0,volume_b))
+
+        self.channel_a.set_volume(volume_a)
+        self.channel_b.set_volume(volume_b)
 
     def shutdown(self): 
         pygame.mixer.stop()

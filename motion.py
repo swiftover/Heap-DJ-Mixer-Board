@@ -55,8 +55,8 @@ class interpreter:
 
 
         # gesture classification 
-# gesture classification
-        gesture = self.last_gesture  # default
+
+        gesture = self.last_gesture  
 
         if pinch:
             gesture = "pinch"
