@@ -1,7 +1,7 @@
 import pygame
 
 from config import TRACK_A_PATH, TRACK_B_PATH, INITIAL_CROSSFADER, MASTER_VOLUME, SMOOTHING_FACTOR
-from utils.smoothing import smooth_value
+from smoothing import smooth_value
 
 
 class audio_engine: 

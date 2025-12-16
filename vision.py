@@ -9,9 +9,9 @@ class HandTracker:
             min_dc = detection_confidence,
             min_tc = tracking_confidence,
         )
-    self.drawing_utils = mp.solutions.drawing_utils # draws the hand overlay 
+        self.drawing_utils = mp.solutions.drawing_utils # draws the hand overlay 
 
-    self._last_landmarks = None # store detected hand land mark 
+        self._last_landmarks = None # store detected hand land mark 
 
     def process(self,frame): 
         #conversion from cv2 to mp         
@@ -35,6 +35,6 @@ class HandTracker:
             self.drawing_utils.draw_landmarks( 
                 frame, hand_landmarks, self.mp_hands.HAND_CONNECTIONS
             )
-            
+
 
 
