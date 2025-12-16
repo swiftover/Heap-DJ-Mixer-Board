@@ -1,10 +1,10 @@
 import pygame
 
 from config import TRACK_A_PATH, TRACK_B_PATH, INITIAL_CROSSFADER, MASTER_VOLUME, SMOOTHING_FACTOR
-from smoothing import smooth_value
+import smoothing
 
 
-class audio_engine: 
+class AudioEngine: 
     def __init__(self): 
         pygame.mixer.init()
 
@@ -29,10 +29,12 @@ class audio_engine:
         if x is None: 
             return 
         
-        if gesture == "open": 
-            self.smooth_crossfader = smooth_value(self.smooth_crossfader, x, SMOOTHING_FACTOR)
+        if gesture == "open":
+            self.smooth_crossfader = smoothing.smooth_value(
+                self.smooth_crossfader, x, SMOOTHING_FACTOR
+            )
             self.crossfader = self.smooth_crossfader
-            self.apply_crossfade() 
+            self.apply_crossfade()
 
         elif gesture == "fist":
             pass 

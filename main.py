@@ -4,13 +4,13 @@
 import cv2 
 from vision import HandTracker #from vision.py 
 from audio_engine import AudioEngine # from audio_engine.py 
-from gestures import GestureInterpreter #from gestures.py 
+from motion import interpreter #from motion.py 
 
 
 def main(): 
     hand_tracker = HandTracker()
     audio_engine = AudioEngine() 
-    gesture_interpreter = GestureInterpreter()
+    gesture_interpreter = interpreter()
 
 
     capture = cv2.VideCapture(0) #opens default camera 

@@ -18,7 +18,7 @@ class HandTracker:
         rgb_frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
 
         #hand track
-        resultant = self.hands.process(rbg.frame)
+        resultant = self.hands.process(rgb_frame)
         
 
         if resultant.multi_hands_landmarks: 
