@@ -6,8 +6,8 @@ class HandTracker:
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(
             max_num_hands = max_num_hands,
-            min_dc = detection_confidence,
-            min_tc = tracking_confidence,
+            min_detection_confidence = detection_confidence,
+            min_tracking_confidence = tracking_confidence,
         )
         self.drawing_utils = mp.solutions.drawing_utils # draws the hand overlay 
 

@@ -13,7 +13,7 @@ def main():
     gesture_interpreter = interpreter()
 
 
-    capture = cv2.VideCapture(0) #opens default camera 
+    capture = cv2.VideoCapture(0) #opens default camera 
 
     if not capture.VideoCapture(0):
         print("ERROR COULDNT OPEN DEFAULT CAMERA")
