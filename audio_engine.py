@@ -23,6 +23,9 @@ class AudioEngine:
         self.smooth_crossfader = self.crossfader
         self.master_volume = MASTER_VOLUME
 
+        self.deck_a_paused = False 
+        self.deck_b_paused = False
+
         self.apply_crossfade()
 
 
@@ -31,6 +34,7 @@ class AudioEngine:
 
         gesture = controls.get("gesture","none")
         x = controls.get("x", None)
+    
 
         if x is None: 
             return 
@@ -42,27 +46,48 @@ class AudioEngine:
             self.crossfader = self.smooth_crossfader
             self.apply_crossfade()
 
-        elif gesture == "fist":
-            pass 
+        # FIST = pause based on side
+        elif gesture == "fist" and x is not None:
+            if x < 0.5:
+                # LEFT → pause Deck A
+                if not self.deck_a_paused:
+                    self.channel_a.pause()
+                    self.deck_a_paused = True
+            else:
+                # RIGHT → pause Deck B
+                if not self.deck_b_paused:
+                    self.channel_b.pause()
+                    self.deck_b_paused = True
 
-        else: 
-            pass 
+        # Not fist (or unknown) => resume anything that was paused
+        else:
+            if self.deck_a_paused:
+                self.channel_a.unpause()
+                self.deck_a_paused = False
+
+            if self.deck_b_paused:
+                self.channel_b.unpause()
+                self.deck_b_paused = False
+
+
+
+
     def apply_crossfade(self):
 
         #0.0 = full a, 0 b, 1 = full b , 0 a
+        # Clamp crossfader
+        self.crossfader = max(0.0, min(1.0, float(self.crossfader)))
 
-        if self.channel_a is None or self.channel_b is None: 
-            return 
-        
-        volume_a = (1-self.crossfader) * self.master_volume
-        volume_b = self.crossfader * self.master_volume 
+        volume_a = (1 - self.crossfader) * self.master_volume
+        volume_b = self.crossfader * self.master_volume
 
-        volume_a = max(0.0, min(1.0,volume_a))
-        volume_b = max(0.0, min(1.0,volume_b))
+        volume_a = max(0.0, min(1.0, volume_a))
+        volume_b = max(0.0, min(1.0, volume_b))
 
         self.channel_a.set_volume(volume_a)
         self.channel_b.set_volume(volume_b)
 
+        
     def shutdown(self): 
         pygame.mixer.stop()
         pygame.mixer.quit()
