@@ -1,6 +1,7 @@
 # audio_engine.py
 import pygame
 import smoothing
+import os 
 
 from config import (
     TRACK_A_PATH,
@@ -70,6 +71,10 @@ class AudioEngine:
         gesture = controls.get("gesture", "none")
         x = float(controls.get("x", 0.5))
 
+        # FIX 1: latch should ONLY stay True while we are actively pointing
+        if gesture != "point":
+            self._point_latched = False
+
         # OPEN HAND = crossfader control
         if gesture == "open":
             self.target_crossfader = max(0.0, min(1.0, x))
@@ -77,9 +82,6 @@ class AudioEngine:
                 self.crossfader, self.target_crossfader, SMOOTHING_FACTOR
             )
             self.apply_crossfade()
-
-            # not pointing anymore
-            self._point_latched = False
 
         # FIST = pause deck depending on side (left pauses A, right pauses B)
         elif gesture == "fist":
@@ -92,12 +94,8 @@ class AudioEngine:
                     self.channel_b.pause()
                     self.deck_b_paused = True
 
-            # not pointing anymore
-            self._point_latched = False
-
-        # POINT = release-to-trigger next track per side
+        # POINT = trigger next track per side ONCE per point gesture
         elif gesture == "point":
-            # only trigger once when we ENTER point gesture
             if not self._point_latched:
                 if x < 0.5:
                     self._schedule_next_track("a")  # point LEFT
@@ -107,10 +105,8 @@ class AudioEngine:
 
             # (do NOT resume paused decks here; point can be used while paused)
 
-        # anything else = resume + reset latch
+        # anything else = resume (and latch already reset above)
         else:
-            self._point_latched = False
-
             if self.deck_a_paused:
                 self.channel_a.unpause()
                 self.deck_a_paused = False
@@ -160,25 +156,47 @@ class AudioEngine:
 
     def _advance_deck_a(self):
         self.idx_a = (self.idx_a + 1) % len(self.queue_a)
-        self.track_a = pygame.mixer.Sound(self.queue_a[self.idx_a])
-        self.channel_a.play(self.track_a, loops=-1, fade_ms=DECK_TRANSITION_FADE)
 
-        # If fist had paused A, keep it paused after swapping
+        print("DEBUG: Deck A swapped to",
+            os.path.basename(self.queue_a[self.idx_a]))
+
+        self.track_a = pygame.mixer.Sound(self.queue_a[self.idx_a])
+
+        # FIX 3: ensure pause state is correct BEFORE play()
         if self.deck_a_paused:
             self.channel_a.pause()
+        else:
+            self.channel_a.unpause()
 
+        # IMPORTANT: set the correct target volume BEFORE fade-in starts
         self.apply_crossfade()
+
+        # Now play with fade-in (it will fade to the current channel volume)
+        self.channel_a.play(self.track_a, loops=-1, fade_ms=DECK_TRANSITION_FADE)
+
+
 
     def _advance_deck_b(self):
         self.idx_b = (self.idx_b + 1) % len(self.queue_b)
-        self.track_b = pygame.mixer.Sound(self.queue_b[self.idx_b])
-        self.channel_b.play(self.track_b, loops=-1, fade_ms=DECK_TRANSITION_FADE)
 
-        # If fist had paused B, keep it paused after swapping
+        print("DEBUG: Deck B swapped to",
+            os.path.basename(self.queue_b[self.idx_b]))
+
+        self.track_b = pygame.mixer.Sound(self.queue_b[self.idx_b])
+
+        # FIX 3: ensure pause state is correct BEFORE play()
         if self.deck_b_paused:
             self.channel_b.pause()
+        else:
+            self.channel_b.unpause()
 
+        # IMPORTANT: set the correct target volume BEFORE fade-in starts
         self.apply_crossfade()
+
+        # Now play with fade-in (it will fade to the current channel volume)
+        self.channel_b.play(self.track_b, loops=-1, fade_ms=DECK_TRANSITION_FADE)
+        print("DEBUG busy B:", self.channel_b.get_busy(), "vol:", self.channel_b.get_volume())
+
 
     def shutdown(self):
         pygame.mixer.stop()

@@ -1,23 +1,24 @@
-#Eduardo Nesta Gonzalez 
-#Conjunction point for all the other files & will run everything 
+# main.py
+# Eduardo Nesta Gonzalez
+# Conjunction point for all the other files & will run everything
 
-import cv2 
-from vision import HandTracker #from vision.py 
-from audio_engine import AudioEngine # from audio_engine.py 
-from motion import interpreter #from motion.py 
+import cv2
+from vision import HandTracker
+from audio_engine import AudioEngine
+from motion import interpreter
 
 
-def main(): 
+def main():
     hand_tracker = HandTracker()
-    audio_engine = AudioEngine() 
+    audio_engine = AudioEngine()
     gesture_interpreter = interpreter()
 
-
-    capture = cv2.VideoCapture(0) #opens default camera 
+    capture = cv2.VideoCapture(0)
 
     if not capture.isOpened():
         print("ERROR COULDNT OPEN DEFAULT CAMERA")
-        return 
+        return
+
     print("Heap DJ Mixer is running, press q to quit")
 
     while True:
@@ -28,22 +29,28 @@ def main():
 
         frame = cv2.flip(frame, 1)
 
+        # Always build a controls dict
+        controls = {}
+
         hand_landmarks = hand_tracker.process(frame)
 
         if hand_landmarks:
-            controls = gesture_interpreter.interpret(hand_landmarks)
-            audio_engine.update(controls)
+            controls = gesture_interpreter.interpret(hand_landmarks) or {}
+
+            print("[MAIN] controls:", controls)
+
+        audio_engine.update(controls)
 
         hand_tracker.draw_landmarks(frame)
-
         cv2.imshow("Heap DJ Mixer", frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
     capture.release()
     cv2.destroyAllWindows()
     audio_engine.shutdown()
+
 
 if __name__ == "__main__":
     main()
