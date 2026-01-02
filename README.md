@@ -31,3 +31,15 @@ The project focuses on **human–computer interaction**, **computer vision**, an
 > Point gestures are edge-triggered, meaning they activate only once per gesture.
 
 ---
+## Audio Files Setup
+- Create a folder named tracks/ in the project root.
+- Add at least one .wav file per deck.
+- Update file paths in config.py if you change filenames.
+
+## Requirements & Downloads
+- System Requirements
+- Python 3.10+
+- Webcam (built-in or external)
+- macOS, Windows, or Linux
+  
+- Install the required libraries using pip: pip install opencv-python mediapipe pygame
