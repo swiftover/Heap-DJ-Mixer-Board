@@ -24,8 +24,8 @@ The project focuses on **human–computer interaction**, **computer vision**, an
 | Open hand | Control crossfader (left ↔ right) |
 | Fist (left side) | Pause / resume Deck A |
 | Fist (right side) | Pause / resume Deck B |
-| Point (left side) | Load next track on Deck A | // STILL WIP
-| Point (right side) | Load next track on Deck B | // STILL WIP
+| Point (left side) | Load next track on Deck A, STILL WIP |
+| Point (right side) | Load next track on Deck B, STILL WIP |
 | Pinch | Reserved for future effects |
 
 > Point gestures are edge-triggered, meaning they activate only once per gesture.
